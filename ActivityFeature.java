@@ -30,9 +30,8 @@ public class ActivityFeature {
 	private double minAvg;
 	private double maxAvg;
 	
-	//TODO
 	/* 
-	 * Wave Frequency 
+	 * TODO Wave Frequency 
 	 * Got by doing a fourier transform of the signal
 	 * on the sample window. 
 	 * 
@@ -120,7 +119,7 @@ public class ActivityFeature {
 		this.name = obj;
 	}
 	
-	public String getName(Name obj) {
+	public static String getName(Name obj) {
 		switch(obj) {
 			case ACTIVITY_RUN:
 				return "running";

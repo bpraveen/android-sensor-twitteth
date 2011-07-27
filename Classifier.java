@@ -3,6 +3,8 @@ package com.example;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.example.ActivityFeature.Name;
+
 public class Classifier {
 
 	public static String STAND_URL = "//media//5652CD5F52CD4509//UU_SummerJob//samples//standing.file";
@@ -231,7 +233,7 @@ public class Classifier {
 		standDataStdDev = classObj.computeDiffSq(standAcValLst, standDataAvg);
 		standDataPeekToPeek = classObj.computePeakToPeak(walkAcValLst);	
 		
-		//Create an ActivityFeature
+		//Create an Run ActivityFeature
 		ActivityFeature runAct = new ActivityFeature();
 		runAct.setAvg(runAvg);
 		runAct.setMaxAvg(runAvg*2);
@@ -243,17 +245,57 @@ public class Classifier {
 		runAct.setMaxStdDev(runStdDev*2);
 		runAct.setMinStdDev(runStdDev/2);
 
-		//Create a DataSet Object
+		//Create a Walk Activity Feature
+		ActivityFeature walkAct = new ActivityFeature();
+		walkAct.setAvg(walkAvg);
+		walkAct.setMaxAvg(walkAvg*2);
+		walkAct.setMinAvg(walkAvg/2);
+		walkAct.setPeekToPeek(walkPToP);
+		walkAct.setMaxPeekToPeek(walkPToP*2);
+		walkAct.setMinPeekToPeek(walkPToP/2);
+		walkAct.setStdDev(walkStdDev);
+		walkAct.setMaxStdDev(walkStdDev*2);
+		walkAct.setMinStdDev(walkStdDev/2);
+		
+		//Create a Stand Activity Feature
+		ActivityFeature standAct = new ActivityFeature();
+		standAct.setAvg(standAvg);
+		standAct.setMaxAvg(standAvg*2);
+		standAct.setMinAvg(standAvg/2);
+		standAct.setPeekToPeek(standPToP);
+		standAct.setMaxPeekToPeek(standPToP*2);
+		standAct.setMinPeekToPeek(standPToP/2);
+		standAct.setStdDev(standStdDev);
+		standAct.setMaxStdDev(standStdDev*2);
+		standAct.setMinStdDev(standStdDev/2);
+		
+		//Create a Run DataSet Object
 		DataSet data = new DataSet();
 		data.setAvg(runDataAvg);
 		data.setStdDev(runDataStdDev);
 		data.setPeekToPeek(runDataPeekToPeek);
-		double distRun = classObj.kNNClassifyDistance(runAct, data);
-		//double distWalk = classObj.kNNClassifyDistance(walkAct, data);
-		//double distStand = classObj.kNNClassifyDistance(standAct, data);
-		//Should return "Run"
 		
-		//String act = classObj.kNNClassifyVoting(distRun, distWalk, distRun);
+		double distRun = classObj.kNNClassifyDistance(runAct, data);
+		
+		//Create a Walk DataSet Object
+		data = new DataSet();
+		data.setAvg(walkDataAvg);
+		data.setStdDev(walkDataStdDev);
+		data.setPeekToPeek(walkDataPeekToPeek);
+
+		double distWalk = classObj.kNNClassifyDistance(runAct, data);
+
+		//Create a Stand DataSet Object
+		data = new DataSet();
+		data.setAvg(standDataAvg);
+		data.setStdDev(standDataStdDev);
+		data.setPeekToPeek(standDataPeekToPeek);
+		
+		double distStand = classObj.kNNClassifyDistance(standAct, data);
+		
+		String act = classObj.kNNClassifyVoting(distRun, distWalk, distRun);
+		
+		System.out.println ("Activity Classified as:" + act);
 		
 	}
 
@@ -313,9 +355,6 @@ public class Classifier {
 		stdDevDist = Math.abs(act.getStdDev() - query.getStdDev() /
 				(act.getMaxAvg() - act.getMinAvg()));
 
-		//Local Distance of DiffSq
-		//TODO
-
 		//Local Distance of PeekToPeek
 		peekToPeekDist = Math.abs(act.getPeekToPeek() - query.getPeekToPeek() /
 				(act.getMaxPeekToPeek() - act.getMinPeekToPeek()));
@@ -329,11 +368,17 @@ public class Classifier {
 	/*
 	 * Voting: 
 	 * 
-	 * We don't need voting for now. 
-	 * 
+	 * We don't need voting for 1NN  
+	 * Just compare
 	 */
-	public String kNNClassifyVoting(double distance) {
-		return null;
+	public String kNNClassifyVoting(double standDist, double walkDist, double runDist) {
+		if (standDist > walkDist && standDist > runDist) {
+			return ActivityFeature.getName(Name.ACTIVITY_STAND);
+		} else if (standDist < runDist) {
+			return ActivityFeature.getName(Name.ACTIVITY_RUN);
+		} else {
+			return ActivityFeature.getName(Name.ACTIVITY_WALK);
+		}
 	}
 
 }
