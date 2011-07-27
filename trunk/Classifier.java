@@ -243,12 +243,17 @@ public class Classifier {
 		runAct.setMaxStdDev(runStdDev*2);
 		runAct.setMinStdDev(runStdDev/2);
 
-		//Create a Run DataSet Object
-		DataSet runData = new DataSet();
-		runData.setAvg(runDataAvg);
-		runData.setStdDev(runDataStdDev);
-		runData.setPeekToPeek(runDataPeekToPeek);
-		classObj.kNNClassifyDistance(runAct, runData);
+		//Create a DataSet Object
+		DataSet data = new DataSet();
+		data.setAvg(runDataAvg);
+		data.setStdDev(runDataStdDev);
+		data.setPeekToPeek(runDataPeekToPeek);
+		double distRun = classObj.kNNClassifyDistance(runAct, data);
+		//double distWalk = classObj.kNNClassifyDistance(walkAct, data);
+		//double distStand = classObj.kNNClassifyDistance(standAct, data);
+		//Should return "Run"
+		
+		//String act = classObj.kNNClassifyVoting(distRun, distWalk, distRun);
 		
 	}
 
@@ -327,8 +332,8 @@ public class Classifier {
 	 * We don't need voting for now. 
 	 * 
 	 */
-	public void kNNClassifyVoting() {
-
+	public String kNNClassifyVoting(double distance) {
+		return null;
 	}
 
 }
