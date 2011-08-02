@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="sendMessage">sendMessage</string>
+<string name="app_name">Twitteth</string>
+<string name="permDescription">permission</string>
+<string name="labelUpdate">Update</string>
+<string name="oauth_name">OAuth</string>
+<string name="timeline_label">Timeline</string>
+<string name="friends_label">Friends</string>
+<string name="titlePrefs">Settings</string>
+<string name="labelOAuth">Authorize</string>
+<string name="titleExit">Exit</string>
+<string name="searchHint">Search hashtags or users</string>
+    <string name="labelTimeline">Timeline</string>
+
+ <!--  Database -->
+ <string name="sql">CREATE table timeline ( _id INTEGER NOT NULL
+    PRIMARY KEY,created_at INTEGER, status TEXT, user TEXT, isFavorite INTEGER, isDisaster INTEGER);</string>
+      
+      <string name="sqlDisaster">CREATE table DisasterTable ( _id INTEGER NOT NULL PRIMARY KEY
+    , created_at INTEGER, added_at INTEGER, status TEXT NOT NULL, user TEXT NOT NULL, sent_by TEXT,
+     isFromServer INTEGER, hasBeenSent INTEGER, isValid INTEGER, hopCount INTEGER);</string>
+        
+    <string name="sqlAddresses">CREATE table AddressesTable ( _mac TEXT NOT NULL PRIMARY KEY,
+     met_at INTEGER, tweetsNumber INTEGER);</string>
+     
+      <string name="sqlFavorites">CREATE table FavoritesTable ( _id INTEGER NOT NULL
+    PRIMARY KEY,created_at INTEGER, status TEXT, user TEXT);</string> 
+    
+     <string name="sqlMentions">CREATE table MentionsTable ( _id INTEGER NOT NULL
+    PRIMARY KEY,created_at INTEGER, status TEXT, user TEXT);</string> 
+    
+      <string name="sqlProfilePictures">CREATE table PicturesTable ( user TEXT NOT NULL
+    PRIMARY KEY, image BLOB);</string> 
+     
+     <!--  DeviceListActivity -->
+    <string name="button_scan">Scan for devices</string>
+
+</resources>

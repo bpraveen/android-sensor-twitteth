@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<EditTextPreference
+		android:title="User Name"
+		android:key="username" android:positiveButtonText="Save" android:summary="Should not be modified (DEBUG)"></EditTextPreference>
+	<CheckBoxPreference android:title="DisasterMode" android:key="prefDisasterMode" android:selectable="true" android:enabled="true" android:summary="Press to enable disaster mode"></CheckBoxPreference>
+	
+</PreferenceScreen>
