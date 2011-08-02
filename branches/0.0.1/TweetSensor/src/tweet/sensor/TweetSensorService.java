@@ -15,15 +15,14 @@ public class TweetSensorService extends Service {
 
 	public static final int MSG_START_SENSING = 1;
 	public static final int MSG_STOP_SENSING = 2;
-	private static boolean sHandlerRegistered = false;
-	
-	private SensorManager mSensorMgr;
-	private LocationManager mLocationMgr;
-
 	// Time in milliseconds
 	public static final int LOCATION_MIN_TIME_CHANGE_UPDATE = 1000;
 	// In meters
 	public static final int LOCATION_MIN_DISTANCE_CHANGE_UPDATE = 1;
+	
+	private static boolean sHandlerRegistered = false;	
+	private SensorManager mSensorMgr;
+	private LocationManager mLocationMgr;
 
 	class IncomingHandler extends Handler {
 
