@@ -13,12 +13,12 @@ import android.widget.Toast;
 
 public class TweetSensorService extends Service {
 
-	private static boolean handlerRegistered = false;
-	private SensorManager mSensorMgr;
-	private LocationManager mLocationMgr;
-
 	public static final int MSG_START_SENSING = 1;
 	public static final int MSG_STOP_SENSING = 2;
+	private static boolean sHandlerRegistered = false;
+	
+	private SensorManager mSensorMgr;
+	private LocationManager mLocationMgr;
 
 	// Time in milliseconds
 	public static final int LOCATION_MIN_TIME_CHANGE_UPDATE = 1000;
@@ -48,11 +48,11 @@ public class TweetSensorService extends Service {
 						LOCATION_MIN_DISTANCE_CHANGE_UPDATE,
 						UserInfoHandler.getHandler());
 
-				handlerRegistered = true;
+				sHandlerRegistered = true;
 				break;
 
 			case MSG_STOP_SENSING:
-				if (handlerRegistered) {
+				if (sHandlerRegistered) {
 					Toast.makeText(getApplicationContext(), "stopping sensor",
 							Toast.LENGTH_SHORT).show();
 					mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
