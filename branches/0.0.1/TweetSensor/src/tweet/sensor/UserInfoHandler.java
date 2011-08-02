@@ -42,15 +42,15 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 	private int mSampleNo = 0;
 	private int mTotalSamples = 256;
 	private double mDurationSample = 256.0;
-	private double longitude, latitude;
+	private double mLongitude, mLatitude;
 	private long mStartTime = System.currentTimeMillis();
 	private long mSamplingTime[] = new long[mTotalSamples];
-	private LinkedList<Number> accList = new LinkedList<Number>();
-	private TweetSensorService sensorService;
+	private LinkedList<Number> mAccList = new LinkedList<Number>();
+	private TweetSensorService mSensorService;
 
 	// FIXME check if static is required
 	public static String userInfoStr;
-	private static UserInfoHandler handler;
+	private static UserInfoHandler sHandler;
 
 	/*
 	 * Acceleration from x, y, z accelerometer values
@@ -73,11 +73,11 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 	 * @return UserInfoHandler returns instance of UserInfoHandler
 	 */
 	public static UserInfoHandler getHandler() {
-		if (handler == null) {
-			handler = new UserInfoHandler();
+		if (sHandler == null) {
+			sHandler = new UserInfoHandler();
 		}
 
-		return handler;
+		return sHandler;
 	}
 
 	/*
@@ -89,7 +89,7 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 	 * @return void
 	 */
 	public void setService(TweetSensorService sensorService) {
-		this.sensorService = sensorService;
+		this.mSensorService = sensorService;
 	}
 
 	/*
@@ -125,33 +125,33 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 
 		mSamplingTime[mSampleNo] = System.currentTimeMillis() - mStartTime;
 		acc = getAcceleration(x, y, z);
-		accList.add(acc);
+		mAccList.add(acc);
 
 		// Process every mTotalSamples interval
 		if (mSampleNo >= mTotalSamples - 1) {
 
 			// Data Interpolation Linearization
 			linear_data = UserInfoUtil.linearizeData(mDurationSample,
-					mTotalSamples, mSamplingTime, accList);
+					mTotalSamples, mSamplingTime, mAccList);
 			
 			// Smoothen the data
 			smoothed_data = UserInfoUtil.smoothenData(linear_data);
 			
 			// Classify Activity
 			act = UserInfoActivityClassifier.kNNClassifyActivity(smoothed_data);
-			userInfoStr = act + "longitude:" + longitude + "latitude:"
-					+ latitude;
+			userInfoStr = act + "longitude:" + mLongitude + "latitude:"
+					+ mLatitude;
 			
 			Log.d(TweetSensorService.tag, TweetSensorService.tag + "_Activity"
 					+ userInfoStr);
 
 			// Broadcast the data
-			if (sensorService != null) {
+			if (mSensorService != null) {
 				//TODO: Use appropriate action
 				Intent i = new Intent();
 				i.putExtra("userInfoStr", userInfoStr);
 				i.setAction(Intent.ACTION_VIEW);
-				sensorService.sendBroadcast(i);
+				mSensorService.sendBroadcast(i);
 			}
 
 			// Reset the start time
@@ -171,8 +171,8 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 	 */
 	@Override
 	public void onLocationChanged(Location location) {
-		latitude = location.getLatitude();
-		longitude = location.getLongitude();
+		mLatitude = location.getLatitude();
+		mLongitude = location.getLongitude();
 	}
 
 	/*
