@@ -84,7 +84,7 @@ public class MyTwitter extends Activity  implements OnClickListener {
 	
 	
 	@Override
-	public void onPause(){
+	public void onPause() {
 		super.onPause();
 	}
 
