@@ -80,6 +80,17 @@ public class UserInfoHandler implements SensorEventListener, LocationListener {
 		return sHandler;
 	}
 
+	
+	/*
+	 * To reset the handler to null
+	 * 
+	 */
+	public static void clearHandler() {
+		if (sHandler != null) {
+			sHandler = null;
+		}
+	}
+	
 	/*
 	 * Set the service instance which creates the handler, Required for calling
 	 * service specific methods like sending broadcast
