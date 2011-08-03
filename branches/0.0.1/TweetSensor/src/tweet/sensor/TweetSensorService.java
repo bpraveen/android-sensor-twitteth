@@ -61,9 +61,6 @@ public class TweetSensorService extends Service {
 			switch (msg.what) {
 
 			case MSG_START_SENSING:
-				Toast.makeText(getApplicationContext(), "starting sensor",
-						Toast.LENGTH_SHORT).show();
-
 				mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 				mSensorMgr.registerListener(UserInfoHandler.getHandler(),
 						mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -81,8 +78,6 @@ public class TweetSensorService extends Service {
 
 			case MSG_STOP_SENSING:
 				if (sHandlerRegistered) {
-					Toast.makeText(getApplicationContext(), "stopping sensor",
-							Toast.LENGTH_SHORT).show();
 					mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 					mSensorMgr.unregisterListener(UserInfoHandler.getHandler());
 				}
@@ -98,7 +93,7 @@ public class TweetSensorService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		Toast.makeText(getApplicationContext(), "binding", Toast.LENGTH_SHORT)
+		Toast.makeText(getApplicationContext(), "binding to sensor service", Toast.LENGTH_SHORT)
 				.show();
 
 		UserInfoHandler.getHandler().setService(this);
@@ -107,10 +102,12 @@ public class TweetSensorService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
-		Toast.makeText(getApplicationContext(), "unbinding", Toast.LENGTH_SHORT)
+		Toast.makeText(getApplicationContext(), "unbinding sensor service", Toast.LENGTH_SHORT)
 				.show();
-
+		
+		mSensorMgr.unregisterListener(UserInfoHandler.getHandler());
 		UserInfoHandler.getHandler().setService(null);
+		UserInfoHandler.clearHandler();
 		return false;
 	}
 }
