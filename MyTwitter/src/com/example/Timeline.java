@@ -667,20 +667,11 @@ public class Timeline extends Activity {
 
 	private ServiceConnection mConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			mService = new Messenger(service);
-			mBound = true;
-			int SERVICE_START = 1;
-			Message msg = Message.obtain(null, SERVICE_START, 0, 0);
-			try {
-				mService.send(msg);
-				Toast.makeText(getApplicationContext(), "register listener", Toast.LENGTH_SHORT).show();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}		
+			// Can be used to send messages to the service	
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
-			Toast.makeText(getApplicationContext(), "unregister listener", Toast.LENGTH_SHORT).show();				
+			// Rarely called don't rely on this method				
 		}
 	};
 	
