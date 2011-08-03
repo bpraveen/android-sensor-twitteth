@@ -61,51 +61,73 @@ public class TweetSensorService extends Service {
 			switch (msg.what) {
 
 			case MSG_START_SENSING:
-				mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-				mSensorMgr.registerListener(UserInfoHandler.getHandler(),
-						mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-						SensorManager.SENSOR_DELAY_NORMAL);
-
-				mLocationMgr = (LocationManager) getSystemService(LOCATION_SERVICE);
-				mLocationMgr.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER,
-						LOCATION_MIN_TIME_CHANGE_UPDATE,
-						LOCATION_MIN_DISTANCE_CHANGE_UPDATE,
-						UserInfoHandler.getHandler());
-
-				sHandlerRegistered = true;
 				break;
 
 			case MSG_STOP_SENSING:
-				if (sHandlerRegistered) {
-					mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
-					mSensorMgr.unregisterListener(UserInfoHandler.getHandler());
-				}
 				break;
+				
 			default:
 				super.handleMessage(msg);
 			}
 		}
 	}
 
+	/*
+	 * Register the listener for accelerometer and location
+	 */
+	private void startSensors() {
+		mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+		mSensorMgr.registerListener(UserInfoHandler.getHandler(),
+				mSensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_NORMAL);
+
+		mLocationMgr = (LocationManager) getSystemService(LOCATION_SERVICE);
+		mLocationMgr.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER,
+				LOCATION_MIN_TIME_CHANGE_UPDATE,
+				LOCATION_MIN_DISTANCE_CHANGE_UPDATE,
+				UserInfoHandler.getHandler());
+
+		sHandlerRegistered = true;		
+	}
+	
+	/*
+	 * Unregister the listener for all sensors
+	 */
+	private void stopSensors() {
+		if (sHandlerRegistered) {
+			mSensorMgr = (SensorManager) getSystemService(SENSOR_SERVICE);
+			mSensorMgr.unregisterListener(UserInfoHandler.getHandler());
+		}
+	}
+	
 	final Messenger mMessenger = new Messenger(new IncomingHandler());
 	static final String tag = "TweetSensor";
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Service#onBind(android.content.Intent)
+	 */
 	@Override
 	public IBinder onBind(Intent intent) {
 		Toast.makeText(getApplicationContext(), "binding to sensor service", Toast.LENGTH_SHORT)
 				.show();
 
 		UserInfoHandler.getHandler().setService(this);
+		startSensors();
 		return mMessenger.getBinder();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Service#onUnbind(android.content.Intent)
+	 */
 	@Override
 	public boolean onUnbind(Intent intent) {
 		Toast.makeText(getApplicationContext(), "unbinding sensor service", Toast.LENGTH_SHORT)
 				.show();
 		
-		mSensorMgr.unregisterListener(UserInfoHandler.getHandler());
+		stopSensors();
 		UserInfoHandler.getHandler().setService(null);
 		UserInfoHandler.clearHandler();
 		return false;
