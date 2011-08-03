@@ -111,33 +111,6 @@ public class Timeline extends Activity {
 	String userName = "";
     Messenger mService = null;
 	boolean mBound;
-
-	private ServiceConnection mConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			mService = new Messenger(service);
-			mBound = true;
-			int SERVICE_START = 1;
-			Message msg = Message.obtain(null, SERVICE_START, 0, 0);
-			try {
-				mService.send(msg);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}		
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			mService = null;
-			mBound = false;
-			
-			int SERVICE_STOP = 2;
-			Message msg = Message.obtain(null, SERVICE_STOP, 0, 0);
-			try {
-				mService.send(msg);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}					
-		}
-	};
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -160,11 +133,7 @@ public class Timeline extends Activity {
 		registerForContextMenu(listTimeline);
 		// Register to get ACTION_NEW_TWITTER_STATUS broadcasts
 		registerReceiver(twitterStatusReceiver, new IntentFilter(
-				UpdaterService.ACTION_NEW_TWITTER_STATUS));
-		
-		// Register to get sensor data updates
-		registerReceiver(externalAppReceiver, new IntentFilter("test"));
-		
+				UpdaterService.ACTION_NEW_TWITTER_STATUS));		
 		
 		activity = this;
 		// delete really old tweets
@@ -324,8 +293,10 @@ public class Timeline extends Activity {
 	public void onDestroy() {
 		Log.i(TAG, "inside on destroy, stopping everything");
 		unregisterReceiver(twitterStatusReceiver);
+		unregisterReceiver(sensorDataReceiver);
 		isRunning = false;
 		stopService(new Intent(this, UpdaterService.class));
+		unbindService(mConnection);
 		BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 		mBtAdapter.disable();
 		if (prefs.getBoolean("prefDisasterMode", false))
@@ -694,6 +665,26 @@ public class Timeline extends Activity {
 		}
 	}
 
+	private ServiceConnection mConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			mService = new Messenger(service);
+			mBound = true;
+			int SERVICE_START = 1;
+			Message msg = Message.obtain(null, SERVICE_START, 0, 0);
+			try {
+				mService.send(msg);
+				Toast.makeText(getApplicationContext(), "register listener", Toast.LENGTH_SHORT).show();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}		
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			Toast.makeText(getApplicationContext(), "unregister listener", Toast.LENGTH_SHORT).show();				
+		}
+	};
+	
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
